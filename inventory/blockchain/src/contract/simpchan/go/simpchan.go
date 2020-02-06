@@ -29,11 +29,9 @@ package main
  * 2 specific Hyperledger Fabric specific libraries for Smart Contracts
  */
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"strconv"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
 )
@@ -72,7 +70,7 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.addToVar(APIstub, args)
 	} else if function == "setVar" {
 		return s.setVar(APIstub, args)
-	} 
+	}
 
 	return shim.Error("Invalid Smart Contract function name: " + function)
 }

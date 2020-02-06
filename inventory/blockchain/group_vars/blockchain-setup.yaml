@@ -56,6 +56,12 @@ channels:                   # List of channel objects
         metadataPath: ""
         language: golang
         version: v1
+      - id: simpchan
+        contractID: simpchan               # NOTE: This should be unique for chaincodes across channels
+        path: "contract/simpchan/go/"      # NOTE: Path to Directory where chaincode file is located
+        metadataPath: ""
+        language: golang
+        version: v1
 # Uncomment the following lines to install and instantiate marbles chaincode on this channel
 #      - id: marbles
 #        contractID: marbles               # NOTE: This should be unique for chaincodes across channels
