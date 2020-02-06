@@ -7,7 +7,7 @@ test:
   rounds:
   - label: initLedger
     txNumber:
-    - 1             # Run just once and this will create 10 cars with id CAR1, CAR2 .... etc. These will be used for query and change owner operation (See fabcar.go)
+    - 1             # Run just once and this will create 10 cars with id CAR1, CAR2 .... etc. These will be used for query and change owner operation (See simpchan.go)
     rateControl:
     - type: fixed-rate
       opts:
@@ -25,7 +25,7 @@ test:
     - type: fixed-rate
       opts:
         tps: 200
-    callback: ../inventory/blockchain/benchmark/fabcar/createVar.js
+    callback: ../inventory/blockchain/benchmark/simpchan/createVar.js
 
 monitor:
   type:
