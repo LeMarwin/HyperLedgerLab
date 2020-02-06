@@ -22,12 +22,12 @@ module.exports.run = function () {
 
     if (bc.bcType === 'fabric-ccp') {
         args = {
-            chaincodeFunction: 'createVar',
+            chaincodeFunction: 'setVar',
             chaincodeArguments: [varId, varVal.toString()]
         };
     } else {
         args = {
-            transaction_type: "createCar",
+            transaction_type: "setVar",
             TestVariableID: varId,
             Value: varVal.toString()
         };
