@@ -49,6 +49,10 @@ type Fabvar struct {
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
  */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
+	initVar := Fabvar{Value: 1}
+	varAsBytes, _ := json.Marshal(initVar)
+	APIstub.PutState("VAR0", varAsBytes)
+	fmt.Println("Added", initVar)
 	return shim.Success(nil)
 }
 
