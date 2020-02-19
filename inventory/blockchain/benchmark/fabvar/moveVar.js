@@ -26,7 +26,7 @@ module.exports.run = function () {
             FabvarID: varId
         };
     }
-    return bc.invokeSmartContract(
+    return bc.invokeSmartContractUnordered(
         contx,
         'fabvar',
         'v1',
