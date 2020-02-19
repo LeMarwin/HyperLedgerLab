@@ -30,7 +30,7 @@ fabric_create_cli: false
 # Custom fabric container images
 fabric_images:
   ca: "hyperledger/fabric-ca:{{ fabric_ca_version }}"
-  peer: "lemarwin42/fabric-peer:tum-fabric"
+  peer: "lemarwin42/fabric-peer:latest"
   tools: "hyperledger/fabric-tools:{{ fabric_version }}"
   orderer: "lemarwin42/fabric-orderer:latest"
   couchdb: "hyperledger/fabric-couchdb:{{ fabric_couchdb_version }}"
