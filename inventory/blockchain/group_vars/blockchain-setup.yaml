@@ -7,7 +7,7 @@ fabric_couchdb_version: 0.4.14
 # Fabric Network Config
 fabric_num_orgs: 2
 fabric_peers_per_org: 2
-fabric_num_orderer: 2
+fabric_num_orderer: 1
 fabric_orderer_domain: orgorderer1
 # Options for Orderer Consensus type: solo/kafka
 fabric_orderer_type: solo

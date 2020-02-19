@@ -16,15 +16,11 @@ test:
 
   - label: moveVar
     txNumber:
-    - 10000
-    - 10000
+    - 1000
     rateControl:
     - type: fixed-rate
       opts:
         tps: 100
-    - type: fixed-rate
-      opts:
-        tps: 200
     callback: ../inventory/blockchain/benchmark/fabvar/moveVar.js
 
   - label: getSum
