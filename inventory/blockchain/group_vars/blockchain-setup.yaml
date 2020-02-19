@@ -50,18 +50,18 @@ channels:                   # List of channel objects
   - name: "mychannel"
     created: false          # Update this value to true if channel is already created
     chaincodes:
-      - id: fabcar
-        contractID: fabcar               # NOTE: This should be unique for chaincodes across channels
-        path: "contract/fabcar/go/"      # NOTE: Path to Directory where chaincode file is located
-        metadataPath: ""
-        language: golang
-        version: v1
-      - id: simpchan
-        contractID: simpchan               # NOTE: This should be unique for chaincodes across channels
-        path: "contract/simpchan/go/"      # NOTE: Path to Directory where chaincode file is located
-        metadataPath: ""
-        language: golang
-        version: v1
+#      - id: fabcar
+#        contractID: fabcar               # NOTE: This should be unique for chaincodes across channels
+#        path: "contract/fabcar/go/"      # NOTE: Path to Directory where chaincode file is located
+#        metadataPath: ""
+#        language: golang
+#        version: v1
+#      - id: simpchan
+#        contractID: simpchan               # NOTE: This should be unique for chaincodes across channels
+#        path: "contract/simpchan/go/"      # NOTE: Path to Directory where chaincode file is located
+#        metadataPath: ""
+#        language: golang
+#        version: v1
       - id: fabvar
         contractID: fabvar               # NOTE: This should be unique for chaincodes across channels
         path: "contract/fabvar/go/"      # NOTE: Path to Directory where chaincode file is located
