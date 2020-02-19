@@ -1,10 +1,6 @@
 'use strict';
 
-module.exports.info = 'Fabvar: add values to default var: 0.';
-
-let txIndex = 0;
-
-let maxVal = 10
+module.exports.info = 'Fabvar: move the VAR0 value to another location.';
 
 let bc, contx;
 module.exports.init = function (blockchain, context, args) {
@@ -14,22 +10,20 @@ module.exports.init = function (blockchain, context, args) {
 };
 
 module.exports.run = function () {
-    txIndex++;
-
-    let varAdd = Math.floor(Math.random() * maxVal)
-    let varId = 'VAR0'
+  
+    let varNum = 1 + Math.floor(Math.random() * 999998)
+    let varId = 'VAR' + varNum.toString()
     let args;
 
     if (bc.bcType === 'fabric-ccp') {
         args = {
-            chaincodeFunction: 'addToVar',
-            chaincodeArguments: [varId, varAdd.toString()]
+            chaincodeFunction: 'moveVar',
+            chaincodeArguments: [varId]
         };
     } else {
         args = {
-            transaction_type: "addToVar",
-            TestVariableID: varId,
-            Value: varVal.toString()
+            transaction_type: "moveVar",
+            FabvarID: varId
         };
     }
     return bc.invokeSmartContract(

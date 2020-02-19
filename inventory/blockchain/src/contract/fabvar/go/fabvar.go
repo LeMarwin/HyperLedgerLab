@@ -29,11 +29,8 @@ package main
  * 2 specific Hyperledger Fabric specific libraries for Smart Contracts
  */
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"strconv"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
 )
@@ -43,7 +40,7 @@ type SmartContract struct {
 }
 
 // Define the car structure, with 4 properties.  Structure tags are used by encoding/json library
-type TestVariable struct {
+type Fabvar struct {
 	Value int `json:"value"`
 }
 
@@ -64,20 +61,15 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// Retrieve the requested Smart Contract function and arguments
 	function, args := APIstub.GetFunctionAndParameters()
 	// Route to the appropriate handler function to interact with the ledger appropriately
-	if function == "queryVar" {
-		return s.queryVar(APIstub, args)
-	} else if function == "initLedger" {
+	if function == "initLedger"{
 		return s.initLedger(APIstub)
-	} else if function == "addToVar" {
-		return s.addToVar(APIstub, args)
-	} else if function == "setVar" {
-		return s.setVar(APIstub, args)
-	} else if function == "createVar"{
-		return s.setVar (APIstub, args)
-	} else if function == "queryAllVars"{
-		return s.queryAllVars(APIstub)
+	} else if function == "queryVar" {
+		return s.queryVar(APIstub, args)
+	} else if function == "getSum" {
+		return s.getSum(APIstub)
+	} else if function == "moveVar" {
+		return s.moveVar(APIstub, args)
 	}
-
 	return shim.Error("Invalid Smart Contract function name: " + function)
 }
 
@@ -92,110 +84,47 @@ func (s *SmartContract) queryVar(APIstub shim.ChaincodeStubInterface, args []str
 }
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	variables := []TestVariable{
-		TestVariable{Value: 0},
-		TestVariable{Value: 0},
-		TestVariable{Value: 0},
-	}
-
-	i := 0
-	for i < len(variables) {
-		fmt.Println("i is ", i)
-		varAsBytes, _ := json.Marshal(variables[i])
-		APIstub.PutState("VAR"+strconv.Itoa(i), varAsBytes)
-		fmt.Println("Added", variables[i])
-		i = i + 1
-	}
-
+	initVar := Fabvar{Value: 1}
+	varAsBytes, _ := json.Marshal(initVar)
+	APIstub.PutState("VAR0", varAsBytes)
+	fmt.Println("Added", initVar)
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) addToVar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+func (s *SmartContract) moveVar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response{
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
-
-	varAsBytes, _ := APIstub.GetState(args[0])
-	v := TestVariable{}
-	dv, err := strconv.Atoi(args[1])
-	if (err != nil){
-		return shim.Error("Failed to parse arg to int")
-	}
-
-	json.Unmarshal(varAsBytes, &v)
-
-	v.Value += dv
-
-	varAsBytes, _ = json.Marshal(v)
+	varAsBytes, _ := APIstub.GetState("VAR0");
 	APIstub.PutState(args[0], varAsBytes)
-
-	// if len(args) != 2 {
-	// 	return shim.Error("Incorrect number of arguments. Expecting 2")
-	// }
-	//
-	// var car = Car{Make: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
-	//
-	// carAsBytes, _ := json.Marshal(car)
-	// APIstub.PutState(args[0], carAsBytes)
-
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) queryAllVars(APIstub shim.ChaincodeStubInterface) sc.Response{
+func (s *SmartContract) getSum(APIstub shim.ChaincodeStubInterface) sc.Response{
 		startKey := "VAR0"
-		endKey := "VAR999"
+		endKey := "VAR999999"
 
 		resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
 		defer resultsIterator.Close()
-
-		// buffer is a JSON array containing QueryResults
-		var buffer bytes.Buffer
-		buffer.WriteString("[")
-
-		bArrayMemberAlreadyWritten := false
+	    var res = 0
 		for resultsIterator.HasNext() {
 			queryResponse, err := resultsIterator.Next()
 			if err != nil {
 				return shim.Error(err.Error())
 			}
-			// Add a comma before array members, suppress it for the first array member
-			if bArrayMemberAlreadyWritten == true {
-				buffer.WriteString(",")
-			}
-			buffer.WriteString("{\"Key\":")
-			buffer.WriteString("\"")
-			buffer.WriteString(queryResponse.Key)
-			buffer.WriteString("\"")
-
-			buffer.WriteString(", \"Record\":")
-			// Record is a JSON object, so we write as-is
-			buffer.WriteString(string(queryResponse.Value))
-			buffer.WriteString("}")
-			bArrayMemberAlreadyWritten = true
+			val := Fabvar{};
+			json.Unmarshal(queryResponse.Value, &val)
+			res += val.Value
 		}
-		buffer.WriteString("]")
-		return shim.Success(buffer.Bytes())
-}
-
-func (s *SmartContract) setVar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+		resAsBytes, err := json.Marshal(res)
+	    if err != nil {
+		return shim.Error(err.Error())
 	}
-	val, err := strconv.Atoi(args[1])
-	if (err != nil){
-		return shim.Error("Failed to parse arg to int")
-	}
-	v := TestVariable{val}
-	varAsBytes, _ := json.Marshal(v)
-	APIstub.PutState(args[0], varAsBytes)
-	return shim.Success(nil)
+		return shim.Success(resAsBytes)
 }
-
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
 func main() {
