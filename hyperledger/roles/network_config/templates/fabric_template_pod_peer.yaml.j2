@@ -99,7 +99,7 @@ spec:
         - name: CORE_PEER_LOCALMSPID
           value: $localMSPID
         - name: CORE_PEER_BP_SIZE
-          value: {{ fabric_peer_bp_size|int }}
+          value: {{ fabric_peer_bp_size }}
         - name: CORE_PEER_BP_TIMEOUT
           value: {{ fabric_peer_bp_timeout }}
 # Added as mentioned here: https://github.com/MCLDG/fabric-on-kubernetes#peers-cannot-start-chaincode-server
