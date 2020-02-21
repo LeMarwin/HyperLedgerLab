@@ -112,3 +112,7 @@ nfs_server_mount_dir: "/opt/share"
 
 # kubernetes kubectl command
 k8s_kubectl_cmd: "{{ lookup('env', 'INVENTORY_DIR_PATH') }}/cluster/artifacts/kubectl --kubeconfig={{ lookup('env', 'INVENTORY_DIR_PATH') }}/cluster/artifacts/admin.conf"
+
+# Block processor's configs
+fabric_peer_bp_size: 30
+fabric_peer_bp_timeout: "0.3s"

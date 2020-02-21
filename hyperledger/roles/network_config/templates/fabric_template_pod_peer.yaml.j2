@@ -58,7 +58,7 @@ spec:
             mountPath: /var/lib/docker
 
         # Fabric Peer
-      - name: $podName 
+      - name: $podName
         image: {{ fabric_images['peer'] }}
         env:
 {% if fabric_state_db == "couchdb" %}
@@ -83,7 +83,7 @@ spec:
         - name: CORE_PEER_PROFILE_ENABLED
           value: "true"
         - name: CORE_PEER_TLS_CERT_FILE
-          value: "/etc/hyperledger/fabric/tls/server.crt" 
+          value: "/etc/hyperledger/fabric/tls/server.crt"
         - name: CORE_PEER_TLS_KEY_FILE
           value: "/etc/hyperledger/fabric/tls/server.key"
         - name: CORE_PEER_TLS_ROOTCERT_FILE
@@ -98,6 +98,10 @@ spec:
           value: $peerGossip
         - name: CORE_PEER_LOCALMSPID
           value: $localMSPID
+        - name: CORE_PEER_BP_SIZE
+          value: {{ fabric_peer_bp_size }}
+        - name: CORE_PEER_BP_TIMEOUT
+          value: {{ fabric_peer_bp_timeout }}
 # Added as mentioned here: https://github.com/MCLDG/fabric-on-kubernetes#peers-cannot-start-chaincode-server
 # Error: panic: Failed to create chaincode server: listen tcp ip:7052: bind: cannot assign requested address
         - name: CORE_PEER_CHAINCODELISTENADDRESS
@@ -112,7 +116,7 @@ spec:
         command: ["peer"]
         args: ["node","start"]
         volumeMounts:
-         - mountPath: /etc/hyperledger/fabric/msp 
+         - mountPath: /etc/hyperledger/fabric/msp
            name: org-crypto-pv
            subPath: $mspPath
          - mountPath: /etc/hyperledger/fabric/tls
@@ -125,7 +129,7 @@ spec:
              claimName: $pvName
        - name: dind-graph-storage
          emptyDir: {}
-       
+
 
 ---
 apiVersion: v1
