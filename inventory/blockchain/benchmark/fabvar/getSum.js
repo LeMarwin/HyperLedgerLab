@@ -23,7 +23,7 @@ module.exports.run = function () {
     }
     return bc.invokeSmartContract(
         contx,
-        'fabcar',
+        'fabvar',
         'v1',
         [args],
         120
