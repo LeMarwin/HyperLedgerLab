@@ -120,7 +120,9 @@ peer:
             # ordering nodes before closing the connection
             timeout: 20s
 
-
+    bp:
+      size: 30
+      timeout: "0.25s"
     # Gossip related configuration
     gossip:
         # Bootstrap set to initialize gossip with.
