@@ -21,7 +21,7 @@ module.exports.run = function () {
             transaction_type: "getSum"
         };
     }
-    return bc.invokeSmartContract(
+    return bc.invokeSmartContractUnordered(
         contx,
         'fabvar',
         'v1',
