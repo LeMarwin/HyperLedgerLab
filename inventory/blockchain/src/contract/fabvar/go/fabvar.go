@@ -49,10 +49,6 @@ type Fabvar struct {
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
  */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
-	initVar := Fabvar{Value: 1}
-	varAsBytes, _ := json.Marshal(initVar)
-	APIstub.PutState("VAR0", varAsBytes)
-	fmt.Println("Added", initVar)
 	return shim.Success(nil)
 }
 
@@ -73,6 +69,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.getSum(APIstub)
 	} else if function == "moveVar" {
 		return s.moveVar(APIstub, args)
+	} else if function == "moveVarSingle" {
+		return  s.moveVarSingle(APIstub, args)
 	}
 	return shim.Error("Invalid Smart Contract function name: " + function)
 }
@@ -96,6 +94,20 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 }
 
 func (s *SmartContract) moveVar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response{
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+	varAsBytes, _ := APIstub.GetState("VAR0");
+	APIstub.PutState(args[0], varAsBytes)
+	APIstub.PutState("A" + args[0], varAsBytes)
+	APIstub.PutState("B" + args[0], varAsBytes)
+	APIstub.PutState("C" + args[0], varAsBytes)
+	return shim.Success(nil)
+}
+
+func (s *SmartContract) moveVarSingle(APIstub shim.ChaincodeStubInterface, args []string) sc.Response{
+
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
@@ -105,29 +117,71 @@ func (s *SmartContract) moveVar(APIstub shim.ChaincodeStubInterface, args []stri
 }
 
 func (s *SmartContract) getSum(APIstub shim.ChaincodeStubInterface) sc.Response{
-		startKey := "VAR0"
-		endKey := "VAR999999"
+	startKey := "VAR0"
+	endKey := "VAR99999"
 
-		resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	var res = 0
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		defer resultsIterator.Close()
-	    var res = 0
-		for resultsIterator.HasNext() {
-			queryResponse, err := resultsIterator.Next()
-			if err != nil {
-				return shim.Error(err.Error())
-			}
-			val := Fabvar{};
-			json.Unmarshal(queryResponse.Value, &val)
-			res += val.Value
-		}
-		resAsBytes, err := json.Marshal(res)
-	    if err != nil {
+		val := Fabvar{};
+		json.Unmarshal(queryResponse.Value, &val)
+		res += val.Value
+	}
+	resultsIterator.Close()
+	resultsIterator, err = APIstub.GetStateByRange("A" + startKey, "A" + endKey)
+	if err != nil {
 		return shim.Error(err.Error())
 	}
-		return shim.Success(resAsBytes)
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		val := Fabvar{};
+		json.Unmarshal(queryResponse.Value, &val)
+		res += val.Value
+	}
+	resultsIterator.Close()
+	resultsIterator, err = APIstub.GetStateByRange("B" + startKey, "B" + endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		val := Fabvar{};
+		json.Unmarshal(queryResponse.Value, &val)
+		res += val.Value
+	}
+	resultsIterator.Close()
+	resultsIterator, err = APIstub.GetStateByRange("C" + startKey, "C" + endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		val := Fabvar{};
+		json.Unmarshal(queryResponse.Value, &val)
+		res += val.Value
+	}
+	resultsIterator.Close()
+	resAsBytes, err := json.Marshal(res)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(resAsBytes)
 }
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
